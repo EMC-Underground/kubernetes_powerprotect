@@ -1,0 +1,14 @@
+---
+apiVersion: "powerprotect.dell.com/v1beta1"
+kind: RestoreJob
+metadata:
+  name: ${restoreName}
+  namespace: powerprotect
+spec:
+  recoverType: RestoreToNew
+  backupJobName: ${backupJob}
+  namespaces:
+  - name: minio
+    alternateNamespace: minio-restored
+  persistentVolumeClaims:
+  - name: "*"
