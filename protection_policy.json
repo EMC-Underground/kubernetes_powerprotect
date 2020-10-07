@@ -7,7 +7,6 @@
     "targetStorageProvisionStrategy" : "AUTO_PROVISION",
     "enabled" : true,
     "passive" : false,
-    "forceFull" : false,
     "priority" : 1,
     "encrypted" : false,
     "dataConsistency" : "CRASH_CONSISTENT",
@@ -22,11 +21,7 @@
       },
       "target" : {
         "storageSystemId" : "dc15f88b-b4e6-4c01-8001-b039b5d6a65f",
-        "dataTargetId" : "21628c6d-a3ac-4576-ab3d-5b2d3dad990e",
         "preferredInterface" : "192.168.1.30"
-      },
-      "attributes" : {
-        "protection" : { }
       },
       "operations" : [ {
         "type" : "AUTO_FULL",
