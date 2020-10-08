@@ -2,7 +2,7 @@
 apiVersion: "powerprotect.dell.com/v1beta1"
 kind: RestoreJob
 metadata:
-  name: originalrestorewordpress
+  name: originalrestorewordpress01
   namespace: powerprotect
 spec:
   recoverType: RestoreToOriginal

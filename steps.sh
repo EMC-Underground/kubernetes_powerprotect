@@ -7,6 +7,9 @@ kubectl apply -f harbornamespace.yaml
 kubectl apply -f sc-common.yaml
 kubectl apply -f mysql-sc.yaml
 kubectl create ns wordpress
+kubectl apply -f  wordpressnamespace.yaml
 helm install wordpresstest bitnami/wordpress --namespace wordpress
-helm install my-release harbor/harbor --namespace --set persistence.persistentVolumeClaim.redis.storageClass=demo-sc
-helm install --namespace minio --generate-name minio/minio --set persistence.storageClass=sc-common
+echo "Lets go checkout the backup!"
+kubectl apply -f restore-wordpress-to-new.yaml
+#helm install my-release harbor/harbor --namespace --set persistence.persistentVolumeClaim.redis.storageClass=demo-sc
+#helm install --namespace minio --generate-name minio/minio --set persistence.storageClass=sc-common
