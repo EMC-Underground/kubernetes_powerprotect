@@ -2,11 +2,11 @@
 apiVersion: "powerprotect.dell.com/v1beta1"
 kind: RestoreJob
 metadata:
-  name: ${restoreName}
+  name: miniorestore
   namespace: powerprotect
 spec:
   recoverType: RestoreToNew
-  backupJobName: ${backupJob}
+  backupJobName: minio-2020-10-07-18-26-07
   namespaces:
   - name: minio
     alternateNamespace: minio-restored
