@@ -167,6 +167,7 @@ upgrade_kubernetes() {
   do
     [[ ${node} != ${hostname} ]] && remote=1
     add_user_sudoers ${user_name} ${node} ${remote}
+    remote=""
   done
   for kv in "${kube_versions[@]}"
   do
@@ -176,6 +177,7 @@ upgrade_kubernetes() {
       upgrade_kubeadm ${kv} ${user_name} ${node} ${remote}
       upgrade_kubernetes_software ${kv} ${user_name} ${node} ${remote}
       upgrade_kubelet ${kv} ${user_name} ${node} ${remote}
+      remote=""
     done
   done
   printf "${cyan}Completed upgrade of kubernetes.... ${reset}\n"
