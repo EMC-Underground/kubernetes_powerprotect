@@ -101,7 +101,7 @@ add_user_sudoers() {
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   echo ${pre_cmd}
   printf "${cyan}Adding ${user_name} to the sudoers file.... ${reset}"
-  echo "${pre_cmd} echo "${user_name} ALL=(ALL) NOPASSWD: ALL" >> ./myuser"
+  echo "${pre_cmd} echo \"${user_name} ALL=(ALL) NOPASSWD: ALL\" >> ./myuser"
   ${pre_cmd} echo "${user_name} ALL=(ALL) NOPASSWD: ALL" >> ./myuser
   ${pre_cmd} sudo chown root:root ./myuser
   ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/
