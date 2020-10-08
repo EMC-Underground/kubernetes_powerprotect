@@ -11,6 +11,10 @@ kubectl get pods -n wordpresssbux
 read -p "Press any key to continue"
 echo "Lets go checkout the backup!"
 kubectl apply -f restore-wordpress-to-new.yaml
+kubectl get restorejobs -n powerprotect wordpressrestore -o yaml
+read -p "Press any key to continue"
+echo "Lets go see if the restore worked!"
+kubectl get pods wordpresstest01-restored
 #curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 #chmod 700 get_helm.sh
 #./get_helm.sh
