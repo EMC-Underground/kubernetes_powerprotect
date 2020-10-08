@@ -132,7 +132,9 @@ upgrade_kubelet() {
   local upg_kube_ver=$1 remote=$2 user_name=$3 node=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
+  echo ${pre_cmd}
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
+  echo "${pre_cmd} sudo apt-mark unhold kubelet kubectl"
   ${pre_cmd} sudo apt-mark unhold kubelet kubectl
   success
   printf "${cyan}Updating apt.... ${reset}"
