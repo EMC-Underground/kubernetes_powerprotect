@@ -102,9 +102,9 @@ add_user_sudoers() {
   printf "${cyan}Adding ${user_name} to the sudoers file.... ${reset}"
   if [[ -z ${remote} ]]
   then
-    echo "${user_name} ALL=(ALL) NOPASSWD: ALL" > ./myuser
+    echo "${user_name} ALL=(ALL:ALL) NOPASSWD:ALL" > ./myuser
   else
-    ${pre_cmd} "echo \"${user_name} ALL=(ALL) NOPASSWD: ALL\" > ./myuser"
+    ${pre_cmd} "echo \"${user_name} ALL=(ALL:ALL) NOPASSWD:ALL\" > ./myuser"
   fi
   ${pre_cmd} sudo chown root:root ./myuser
   ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/
