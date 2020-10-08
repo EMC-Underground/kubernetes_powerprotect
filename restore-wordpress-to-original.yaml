@@ -6,7 +6,7 @@ metadata:
   namespace: powerprotect
 spec:
   recoverType: RestoreToOriginal
-  backupJobName: wordpress-2020-10-08-13-25-21
+  backupJobName: wordpress-2020-10-08-17-52-18
   namespaces:
   - name: wordpress
   persistentVolumeClaims:
