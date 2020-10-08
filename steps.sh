@@ -2,8 +2,11 @@ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scr
 chmod 700 get_helm.sh
 ./get_helm.sh
 helm repo add harbor https://helm.goharbor.io
+helm repo add bitnami https://charts.bitnami.com/bitnami
 kubectl apply -f harbornamespace.yaml
 kubectl apply -f sc-common.yaml
 kubectl apply -f mysql-sc.yaml
+kubectl create ns wordpress
+helm install wordpresstest bitnami/wordpress --namespace wordpress
 helm install my-release harbor/harbor --namespace --set persistence.persistentVolumeClaim.redis.storageClass=demo-sc
 helm install --namespace minio --generate-name minio/minio --set persistence.storageClass=sc-common
