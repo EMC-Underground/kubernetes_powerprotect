@@ -85,7 +85,7 @@ upgrade_kubeadm() {
   ${pre_cmd} sudo apt-mark unhold kubeadm > /dev/null 2>&1
   success
   printf "${cyan}Updating apt.... ${reset}"
-  ${pre_cmd} sudo apt update > /dev/dell 2>&1
+  ${pre_cmd} sudo apt update > /dev/null 2>&1
   success
   printf "${cyan}Upgrading kubeadm to ${upg_kube_ver}.... ${reset}"
   ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00
