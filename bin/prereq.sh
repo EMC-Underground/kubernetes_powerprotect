@@ -99,10 +99,7 @@ add_user_sudoers() {
   local user_name=$1 node=$2 remote=$3
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
-  echo ${node}
-  echo ${pre_cmd}
   printf "${cyan}Adding ${user_name} to the sudoers file.... ${reset}"
-  echo "${pre_cmd} echo \"${user_name} ALL=(ALL) NOPASSWD: ALL\" >> ./myuser"
   ${pre_cmd} echo "${user_name} ALL=(ALL) NOPASSWD: ALL" >> ./myuser
   ${pre_cmd} sudo chown root:root ./myuser
   ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/
@@ -169,7 +166,6 @@ upgrade_kubernetes() {
   for node in "${all_nodes[@]}"
   do
     [[ ${node} != ${hostname} ]] && remote=1
-    echo ${node}
     [[ -z ${remote} ]] && echo "we are null" || echo "we are not Null"
     add_user_sudoers ${user_name} ${node} ${remote}
   done
