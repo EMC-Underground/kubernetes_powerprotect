@@ -184,6 +184,7 @@ upgrade_kubernetes() {
 install_prereqs() {
     printf "${cyan}Kickoff ${BRANCH} pre-req install playbook.... ${reset}"
     success
+    [[ " ${install_tags[@]} " =~ " kubectl " ]] && upgrade_kubernetes && install_tags=( "${install_tags[@]/kubectl}" )
     curl https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/playbook.yml -o /tmp/playbook.yml > /dev/null 2>&1
     ansible-playbook /tmp/playbook.yml --inventory=127.0.0.1, --tags $install_tags
 }
