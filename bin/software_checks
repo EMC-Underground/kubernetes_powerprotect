@@ -167,7 +167,7 @@ helm_checks() {
     command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
     if [ $? -eq 0 ]
     then
-        hv=`helm version --short`
+        hv=`helm version --short | awk -F+ '{print $1}'`
     fi
     success_version $hv $min_hv $tool
 }
