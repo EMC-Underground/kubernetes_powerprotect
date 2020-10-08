@@ -1,0 +1,24 @@
+# Set Color Variables
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+cyan=`tput setaf 6`
+blue=`tput setaf 4`
+magenta=`tput setaf 5`
+check="\xE2\x9C\x94"
+cross="\xE2\x9C\x98"
+min_dv="18.09"
+min_dcv="1.25.5"
+min_vv="1.3.1"
+min_fv="5.8.1"
+min_jv="1.5"
+min_kube="1.18"
+min_hv="3.3"
+min_gv="1.5"
+min_kv="4.0"
+app_version="v0.5.6"
+failed_software=()
+server_list=()
+ssh_repos=1
+no_cleanup=false
+ssh_key=~/.ssh/id_rsa

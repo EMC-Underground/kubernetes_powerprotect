@@ -1,0 +1,197 @@
+software_pre_reqs() {
+    versions=0
+    local install
+    git_checks
+    jq_checks
+    helm_checks
+    kubernetes_checks
+    if [ $versions -eq 1 ]
+    then
+        printf "${red}\n################### Pre-Reqs not met! ##################${reset}\n\n"
+        printf "Install/Update pre-reqs? [y/n]: "
+        read install
+        IFS=","
+        case $install in
+            "y"|"yes")
+                if [[ " ${failed_software[@]} " =~ " kernel " ]]
+                then
+                    printf "${red}\nKernel update required.\n"
+                    printf "${red}This machine will reboot after pre-req's are installed\n"
+                    printf "${red}Please restart the bootstrap script once complete\n\n"
+                fi
+                bash <(curl -fsSL https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/bin/prereq.sh) "${failed_software[*]}" "${BRANCH}"
+                failed_software=()
+                software_pre_reqs
+                ;;
+            "n"|"no")
+                printf "${green}This command will run an Ansible Playbook to install\n"
+                printf "all pre-requisite software (inc. Ansible)\n\n${reset}"
+                printf "bash <(curl -fsSL https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/bin/prereq.sh) ${failed_software[*]} ${BRANCH}\n\n"
+                exit 0
+                ;;
+        esac
+    fi
+    printf "\n${green}All Pre-Reqs met!${reset}\n\n"
+}
+
+function version { echo "$@" | awk -F. '{ printf("%03d%03d%03d\n",
+                                        $1,$2,$3); }'; }
+
+check_kernel() {
+    printf "${cyan}Kernel Version... ${reset}"
+    local  __resultvar=$1
+    local result=`uname -r | awk -F- '{print $1}'`
+    printf "${green}${result}\n"
+    local maj_ver=`echo $result | cut -d'.' -f1`
+    eval $__resultvar="'$maj_ver'"
+}
+
+kernel_checks() {
+    local tool="kernel"
+    local kv=0
+    printf "${cyan}Checking ${tool} version.... "
+    kv=`uname -r | awk -F- '{print $1}'`
+    success_version $kv $min_kv $tool
+}
+
+print_check() {
+    printf "${green}${check}\n${reset}"
+}
+
+print_version() {
+    local current_version=$1 status=$2 required_version=$3
+    case $status in
+        good)
+            printf "${green}${current_version}\n${reset}"
+            ;;
+        bad)
+            if [ $current_version == "0" ]
+            then
+                printf "${red}Not Installed | minimum ver. ${required_version}\n${reset}"
+            else
+                printf "${red}${current_version} | minimum ver. ${required_version}\n${reset}"
+            fi
+            ;;
+    esac
+}
+
+print_cross() {
+    printf "${red}${cross}\n${reset}"
+}
+
+success() {
+    if [ $? -eq 0 ]
+    then
+        print_check
+    else
+        print_cross
+        printf "\n${blue}You may artifacts leftover from a previous run.\n"
+        printf "Try running ${green}\"bash <(curl -fsSL https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/bootstrap.sh) destroy\"${blue} Then try again${reset}\n"
+        exit 1
+    fi
+}
+
+success_version() {
+    local curr_int=$(version $1) req_int=$(version $2) tool=$3 good=1 re='^[0-9]+$'
+    local curr_ver=$1 req_ver=$2
+    [ $curr_int -ge $req_int ] && good=0
+    if ! [[ $curr_int =~ $re ]] ; then curr_ver=0 && good=1 ; fi
+    [ $good -eq 0 ] && print_version $curr_ver "good" $req_ver
+    [ $good -ne 0 ] && print_version $curr_ver "bad" $req_ver && versions=1 && failed_software=( "${failed_software[@]}" "${tool}" )
+}
+
+docker_checks() {
+    local tool="docker"
+    local dv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        dv=`${tool} --version | awk -F'[, ]' '{print $3}' | awk -F'[-]' '{print $1}'`
+    fi
+    success_version $dv $min_dv $tool
+}
+
+docker_compose_checks() {
+    local tool="docker-compose"
+    local dcv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        dcv=`$tool version | awk -F'[, ]' 'NR==1 {print $3}'`
+    fi
+    success_version $dcv $min_dcv $tool
+}
+
+vault_checks() {
+    local tool="vault"
+    local vv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        vv=`vault -v | awk '{print substr($2,2)}'`
+    fi
+    success_version $vv $min_vv $tool
+}
+
+kubernetes_checks() {
+    local tool="kubectl"
+    local kv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        kv=`kubectl version --short | awk 'END{print $3}'`
+    fi
+    success_version $kv $min_kube $tool
+}
+
+jq_checks() {
+    local tool="jq"
+    local jv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        jv=`jq --version | awk -F- '{print $2}'`
+    fi
+    success_version $jv $min_jv $tool
+}
+
+helm_checks() {
+    local tool="helm"
+    local hv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        hv=`helm version --short`
+    fi
+    success_version $hv $min_hv $tool
+}
+
+fly_checks() {
+    local tool="fly"
+    local fv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        fv=`fly --version`
+    fi
+    success_version $fv $min_fv $tool
+}
+
+git_checks() {
+    local tool="git"
+    local gv=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        gv=`git --version | awk '{print $NF}'`
+    fi
+    success_version $gv $min_gv $tool
+}
