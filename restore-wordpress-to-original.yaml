@@ -1,0 +1,13 @@
+---
+apiVersion: "powerprotect.dell.com/v1beta1"
+kind: RestoreJob
+metadata:
+  name: originalrestorewordpress
+  namespace: powerprotect
+spec:
+  recoverType: RestoreToOriginal
+  backupJobName: wordpress-2020-10-08-13-25-21
+  namespaces:
+  - name: wordpress
+  persistentVolumeClaims:
+  - name: "*"
