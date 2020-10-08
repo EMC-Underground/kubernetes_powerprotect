@@ -157,7 +157,7 @@ upgrade_kubernetes() {
   local kube_versions=( "1.15.12" "1.16.15" "1.17.12" "1.18.9" )
   printf "${magenta}Enter username (adminuser): ${reset}"
   read -s user_name
-  if [[ "$result" == "" ]]; then result="adminuser"; fi
+  if [[ "$user_name" == "" ]]; then user_name="adminuser"; fi
   printf "${cyan}Begin upgrade of kubernetes.... ${reset}\n"
   local hostname=`hostname`
   local masters=( `kubectl get nodes -o json | jq -r '.items[] | .metadata.labels | select(."node-role.kubernetes.io/master" != null) | ."kubernetes.io/hostname"'` )
