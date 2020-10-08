@@ -78,7 +78,7 @@ apt_steps() {
 }
 
 upgrade_kubeadm() {
-  local upg_kube_ver=$1 remote=$2 user_name=$3 node=$4
+  local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   printf "${cyan}Marking kubeadm unhold.... ${reset}"
@@ -96,7 +96,7 @@ upgrade_kubeadm() {
 }
 
 add_user_sudoers() {
-  local user_name=$1 remote=$2 node=$3
+  local user_name=$1 node=$2 remote=$3
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   echo ${node}
@@ -110,7 +110,7 @@ add_user_sudoers() {
 }
 
 upgrade_kubernetes_software() {
-  local upg_kube_ver=$1 remote=$2 user_name=$3 node=$4
+  local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   printf "${cyan}Cordon and Drain node.... ${reset}"
@@ -132,7 +132,7 @@ upgrade_kubernetes_software() {
 }
 
 upgrade_kubelet() {
-  local upg_kube_ver=$1 remote=$2 user_name=$3 node=$4
+  local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
@@ -171,16 +171,16 @@ upgrade_kubernetes() {
     [[ ${node} != ${hostname} ]] && remote=1
     echo ${node}
     [[ -z ${remote} ]] && echo "we are null" || echo "we are not Null"
-    add_user_sudoers ${user_name} ${remote} ${node}
+    add_user_sudoers ${user_name} ${node} ${remote}
   done
   for kv in "${kube_versions[@]}"
   do
     for node in "${all_nodes[@]}"
     do
       [[ ${node} != ${hostname} ]] && remote=1
-      upgrade_kubeadm ${kv} ${remote} ${user_name} ${node}
-      upgrade_kubernetes_software ${kv} ${remote} ${user_name} ${node}
-      upgrade_kubelet ${kv} ${remote} ${user_name} ${node}
+      upgrade_kubeadm ${kv} ${user_name} ${node} ${remote}
+      upgrade_kubernetes_software ${kv} ${user_name} ${node} ${remote}
+      upgrade_kubelet ${kv} ${user_name} ${node} ${remote}
     done
   done
   printf "${cyan}Completed upgrade of kubernetes.... ${reset}\n"
