@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/bin/bash
 
 echo "applying the wordpressnamespace yaml"
 kubectl apply -f wordpressnamespace.yaml
@@ -7,6 +7,7 @@ read -p "Press any key to continue"
 echo "Installing WordPress Using Helm"
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install wordpresstest bitnami/wordpress --namespace wordpresssbux
+kubectl get pods -n wordpresssbux
 read -p "Press any key to continue"
 echo "Lets go checkout the backup!"
 kubectl apply -f restore-wordpress-to-new.yaml
