@@ -1,4 +1,14 @@
 #!/bin/bash
+echo "deploying metal-lb"
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+kubectl apply -f metal-lb-config.yaml
+read -p "Press any key to continue"
+
+echo "deploying contour+envoy"
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
+read -p "Press any key to continue"
 
 echo "applying the wordpressnamespace yaml"
 kubectl apply -f wordpressnamespace.yaml
