@@ -124,7 +124,7 @@ upgrade_kubernetes_software() {
   if [[ -z ${remote} ]]
   then
     printf "${cyan}Updating kubernetes master to ${upg_kube_ver}.... ${reset}"
-    echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver}
+    echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
     success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
@@ -138,22 +138,22 @@ upgrade_kubelet() {
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd} || pre_cmd=""
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
-  ${pre_cmd} sudo apt-mark unhold kubelet kubectl
+  ${pre_cmd} sudo apt-mark unhold kubelet kubectl > /dev/null 2>&1
   success
   printf "${cyan}Updating apt.... ${reset}"
-  ${pre_cmd} sudo apt update
+  ${pre_cmd} sudo apt update > /dev/null 2>&1
   success
   printf "${cyan}Upgrading kubectl and kubelet to ${upg_kube_ver}.... ${reset}"
-  ${pre_cmd} sudo apt install -y kubelet=${upg_kube_ver}-00 kubectl=${upg_kube_ver}-00
+  ${pre_cmd} sudo apt install -y kubelet=${upg_kube_ver}-00 kubectl=${upg_kube_ver}-00 > /dev/null 2>&1
   success
   printf "${cyan}Marking hold kubectl and kubelet.... ${reset}"
-  ${pre_cmd} sudo apt-mark hold kubelet kubectl
+  ${pre_cmd} sudo apt-mark hold kubelet kubectl > /dev/null 2>&1
   success
   printf "${cyan}Restarting kubelet service.... ${reset}"
-  ${pre_cmd} sudo systemctl restart kubelet
+  ${pre_cmd} sudo systemctl restart kubelet > /dev/null 2>&1
   success
   printf "${cyan}Uncordon node.... ${reset}"
-  kubectl uncordon ${node}
+  kubectl uncordon ${node} > /dev/null 2>&1
   success
 }
 
@@ -183,6 +183,7 @@ upgrade_kubernetes() {
     done
   done
   printf "${cyan}Completed upgrade of kubernetes.... ${reset}\n"
+  kubectl version --short
 }
 
 install_prereqs() {
