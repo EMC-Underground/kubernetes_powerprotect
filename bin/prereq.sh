@@ -118,11 +118,11 @@ upgrade_kubernetes_software() {
   printf "${cyan}Cordon and Drain node.... ${reset}"
   kubectl drain ${node} --ignore-daemonsets --delete-local-data --force > /dev/null 2>&1
   success
-  printf "${cyan}Planning kubernetes master cluster to ${upg_kube_ver}.... ${reset}"
-  ${pre_cmd} sudo kubeadm upgrade plan > /dev/null 2>&1
-  success
   if [[ -z ${remote} ]]
   then
+    printf "${cyan}Planning kubernetes master cluster to ${upg_kube_ver}.... ${reset}"
+    ${pre_cmd} sudo kubeadm upgrade plan > /dev/null 2>&1
+    success
     printf "${cyan}Updating kubernetes master to ${upg_kube_ver}.... ${reset}"
     echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
     success
