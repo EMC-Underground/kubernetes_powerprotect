@@ -136,7 +136,7 @@ upgrade_kubernetes_software() {
     success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
-    output=`echo "y" | ${pre_cmd} sudo kubeadm upgrade node`
+    echo "y" | ${pre_cmd} sudo kubeadm upgrade node > /dev/null 2>&1
     success
   fi
 }
