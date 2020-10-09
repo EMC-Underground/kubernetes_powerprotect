@@ -132,6 +132,7 @@ upgrade_kubernetes_software() {
     echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
     success
     printf "${cyan}Updating flannel.... ${reset}"
+    kubectl delete daemonsets kube-flannel-ds-amd64 -n kube-system > /dev/null 2>&1
     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > /dev/null 2>&1
     success
   else
