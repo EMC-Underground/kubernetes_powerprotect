@@ -9,7 +9,8 @@ software_pre_reqs() {
     then
         printf "${red}\n################### Pre-Reqs not met! ##################${reset}\n\n"
         printf "Install/Update pre-reqs? [y/n]: "
-        read install
+        install=y
+        #read install
         IFS=","
         case $install in
             "y"|"yes")
