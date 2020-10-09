@@ -104,7 +104,7 @@ add_user_sudoers() {
   then
     echo "${user_name} ALL=(ALL:ALL) NOPASSWD:ALL" > ./myuser
   else
-    ${pre_cmd} "echo \"${user_name} ALL=(ALL:ALL) NOPASSWD:ALL\" > ./myuser"
+    ${pre_cmd} "echo \"${user_name} ALL=(ALL:ALL) NOPASSWD:ALL\" > ./myuser" > /dev/null 2>&1
   fi
   ${pre_cmd} sudo chown root:root ./myuser > /dev/null 2>&1
   ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/ > /dev/null 2>&1
@@ -124,7 +124,7 @@ upgrade_kubernetes_software() {
   if [[ -z ${remote} ]]
   then
     printf "${cyan}Updating kubernetes master to ${upg_kube_ver}.... ${reset}"
-    sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
+    echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
     success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
