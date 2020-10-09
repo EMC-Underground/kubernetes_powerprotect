@@ -8,7 +8,7 @@ spec:
   recoverType: RestoreToNew
   backupJobName: wordpress-2020-10-08-17-52-18
   namespaces:
-  - name: wordpresssbux
+  - name: wordpresssbux01
     alternateNamespace: wordpresstest01-restored
   persistentVolumeClaims:
   - name: "*"
