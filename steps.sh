@@ -13,9 +13,9 @@ read -p "Press any key to continue"
 
 echo "deploy harbor"
 ip_addy=`kubectl get svc envoy -n projectcontour | awk 'END{print $4}'`
-kubectl apply -f harbornamespace.yaml
+kubectl apply -f ${hostname}-harbornamespace.yaml
 helm repo add harbor https://helm.goharbor.io
-helm upgrade --install harbor harbor/harbor -n master02-harbor --values ${hostname}-harbor-values.yaml --set externalURL="https://harbor.${ip_addy}.xip.io",expose.ingress.hosts.core="harbor.${ip_addy}.xip.io",expose.ingress.hosts.notary="harbor-notary.${ip_addy}.xip.io"
+helm upgrade --install harbor harbor/harbor -n ${hostname}-harbor --values harbor-values.yaml --set externalURL="https://harbor.${ip_addy}.xip.io",expose.ingress.hosts.core="harbor.${ip_addy}.xip.io",expose.ingress.hosts.notary="harbor-notary.${ip_addy}.xip.io"
 read -p "Press any key to continue"
 
 echo "applying the wordpressnamespace yaml"
