@@ -25,6 +25,9 @@ success() {
     fi
 }
 
+function version { echo "$@" | awk -F. '{ printf("%03d%03d%03d\n",
+                                        $1,$2,$3); }'; }
+
 yum_checks() {
     local tool="yum"
     local __resultvar=$1
@@ -81,6 +84,8 @@ upgrade_kubeadm() {
   local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd} || pre_cmd=""
+  local curr_adm_ver=`${pre_cmd} kubeadm version -o short | awk '{print substr($1,2);}'`
+  [ $(version ${curr_adm_ver}) -ge $(version ${upg_kube_ver}) ] && return 0
   printf "${cyan}Marking kubeadm unhold.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubeadm > /dev/null 2>&1
   success
@@ -126,9 +131,12 @@ upgrade_kubernetes_software() {
     printf "${cyan}Updating kubernetes master to ${upg_kube_ver}.... ${reset}"
     echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
     success
+    printf "${cyan}Updating flannel.... ${reset}"
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml > /dev/null 2>&1
+    success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
-    echo "y" | ${pre_cmd} sudo kubeadm upgrade node > /dev/null 2>&1
+    output=`echo "y" | ${pre_cmd} sudo kubeadm upgrade node`
     success
   fi
 }
@@ -137,20 +145,31 @@ upgrade_kubelet() {
   local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd} || pre_cmd=""
+  local curr_ctl_ver=`${pre_cmd} kubectl version --short | awk 'NR==1 {print substr($3,2);}'`
+  local curr_let_ver=`${pre_cmd} kubelet version | awk '{print substr($2,2);}'`
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubelet kubectl > /dev/null 2>&1
   success
   printf "${cyan}Updating apt.... ${reset}"
   ${pre_cmd} sudo apt update > /dev/null 2>&1
   success
-  printf "${cyan}Upgrading kubectl and kubelet to ${upg_kube_ver}.... ${reset}"
-  ${pre_cmd} sudo apt install -y kubelet=${upg_kube_ver}-00 kubectl=${upg_kube_ver}-00 > /dev/null 2>&1
+  if [ $(version ${curr_ctl_ver}) -lt $(version ${upg_kube_ver}) ]
+  then
+    printf "${cyan}Upgrading kubectl to ${upg_kube_ver}.... ${reset}"
+    ${pre_cmd} sudo apt install -y kubectl=${upg_kube_ver}-00 > /dev/null 2>&1
+    success
+  fi
+  if [ $(version ${curr_let_ver}) -lt $(version ${upg_kube_ver}) ]
+  then
+    printf "${cyan}Upgrading kubelet to ${upg_kube_ver}.... ${reset}"
+    ${pre_cmd} sudo apt install -y kubelet=${upg_kube_ver}-00 > /dev/null 2>&1
+    success
+  fi
+  printf "${cyan}Restarting kubelet service.... ${reset}"
+  ${pre_cmd} sudo systemctl restart kubelet > /dev/null 2>&1
   success
   printf "${cyan}Marking hold kubectl and kubelet.... ${reset}"
   ${pre_cmd} sudo apt-mark hold kubelet kubectl > /dev/null 2>&1
-  success
-  printf "${cyan}Restarting kubelet service.... ${reset}"
-  ${pre_cmd} sudo systemctl restart kubelet > /dev/null 2>&1
   success
   printf "${cyan}Uncordon node.... ${reset}"
   kubectl uncordon ${node} > /dev/null 2>&1
