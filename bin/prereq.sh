@@ -176,12 +176,12 @@ upgrade_kubernetes() {
   done
   for kv in "${kube_versions[@]}"
   do
-    for node in "${all_nodes[@]}"
+    for new_node in "${all_nodes[@]}"
     do
-      [[ ${node} != ${hostname} ]] && remote=1
-      upgrade_kubeadm ${kv} ${user_name} ${node} ${remote}
-      upgrade_kubernetes_software ${kv} ${user_name} ${node} ${remote}
-      upgrade_kubelet ${kv} ${user_name} ${node} ${remote}
+      [[ ${new_node} != ${hostname} ]] && remote=1
+      upgrade_kubeadm ${kv} ${user_name} ${new_node} ${remote}
+      upgrade_kubernetes_software ${kv} ${user_name} ${new_node} ${remote}
+      upgrade_kubelet ${kv} ${user_name} ${new_node} ${remote}
       remote=""
     done
   done
