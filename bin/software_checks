@@ -4,6 +4,7 @@ software_pre_reqs() {
     git_checks
     jq_checks
     helm_checks
+    k9s_checks
     kubernetes_checks
     if [ $versions -eq 1 ]
     then
@@ -159,6 +160,18 @@ jq_checks() {
         jv=`jq --version | awk -F- '{print $2}'`
     fi
     success_version $jv $min_jv $tool
+}
+
+k9s_checks() {
+    local tool="k9s"
+    local k9v=0
+    printf "${cyan}Checking ${tool} version.... "
+    command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
+    if [ $? -eq 0 ]
+    then
+        k9v=`k9s version --short | awk 'NR==1{print $2}'`
+    fi
+    success_version $k9v $min_k9v $tool
 }
 
 helm_checks() {

@@ -16,6 +16,7 @@ min_kube="1.18"
 min_hv="3.3"
 min_gv="1.5"
 min_kv="4.0"
+min_k9v="0.22.1"
 app_version="v0.5.6"
 failed_software=()
 server_list=()
