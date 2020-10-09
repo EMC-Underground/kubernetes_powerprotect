@@ -124,7 +124,7 @@ upgrade_kubernetes_software() {
   if [[ -z ${remote} ]]
   then
     printf "${cyan}Updating kubernetes master to ${upg_kube_ver}.... ${reset}"
-    echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver} > /dev/null 2>&1
+    echo "y" | sudo kubeadm upgrade apply v${upg_kube_ver}
     success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
@@ -158,11 +158,8 @@ upgrade_kubelet() {
 }
 
 upgrade_kubernetes() {
-  local remote user_name
+  local remote user_name="adminuser"
   local kube_versions=( "1.15.12" "1.16.15" "1.17.12" "1.18.9" )
-  printf "${magenta}Enter username (adminuser): ${reset}"
-  read -s user_name
-  if [[ "$user_name" == "" ]]; then user_name="adminuser"; fi
   printf "${cyan}Begin upgrade of kubernetes.... ${reset}\n"
   local hostname=`hostname`
   local masters=( `kubectl get nodes -o json | jq -r '.items[] | .metadata.labels | select(."node-role.kubernetes.io/master" != null) | ."kubernetes.io/hostname"'` )
