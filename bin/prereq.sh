@@ -106,8 +106,8 @@ add_user_sudoers() {
   else
     ${pre_cmd} "echo \"${user_name} ALL=(ALL:ALL) NOPASSWD:ALL\" > ./myuser"
   fi
-  ${pre_cmd} sudo chown root:root ./myuser > /dev/null 2>&1
-  ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/ > /dev/null 2>&1
+  ${pre_cmd} sudo chown root:root ./myuser
+  ${pre_cmd} sudo mv ./myuser /etc/sudoers.d/
   success
 }
 
