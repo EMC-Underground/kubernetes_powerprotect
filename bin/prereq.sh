@@ -81,6 +81,8 @@ upgrade_kubeadm() {
   local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
+  echo "ssh cmd: ${ssh_cmd}"
+  echo "node: ${node}"
   printf "${cyan}Marking kubeadm unhold.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubeadm > /dev/null 2>&1
   success
@@ -88,7 +90,7 @@ upgrade_kubeadm() {
   ${pre_cmd} sudo apt update > /dev/null 2>&1
   success
   printf "${cyan}Upgrading kubeadm to ${upg_kube_ver}.... ${reset}"
-  ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00
+  ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00 > /dev/null 2>&1
   success
   printf "${cyan}Marking kubeadm hold.... ${reset}"
   ${pre_cmd} sudo apt-mark hold kubeadm > /dev/null 2>&1
@@ -99,6 +101,8 @@ add_user_sudoers() {
   local user_name=$1 node=$2 remote=$3
   local ssh_cmd="ssh -t ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
+  echo "ssh cmd: ${ssh_cmd}"
+  echo "node: ${node}"
   printf "${cyan}Adding ${user_name} to the sudoers file.... ${reset}"
   if [[ -z ${remote} ]]
   then
@@ -115,6 +119,8 @@ upgrade_kubernetes_software() {
   local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
+  echo "ssh cmd: ${ssh_cmd}"
+  echo "node: ${node}"
   printf "${cyan}Cordon and Drain node.... ${reset}"
   kubectl drain ${node} --ignore-daemonsets --delete-local-data --force
   success
@@ -137,6 +143,8 @@ upgrade_kubelet() {
   local upg_kube_ver=$1 user_name=$2 node=$3 remote=$4
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
+  echo "ssh cmd: ${ssh_cmd}"
+  echo "node: ${node}"
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubelet kubectl
   success
@@ -178,6 +186,7 @@ upgrade_kubernetes() {
   do
     for new_node in "${all_nodes[@]}"
     do
+      echo "Node is ${new_node}"
       [[ ${new_node} != ${hostname} ]] && remote=1
       upgrade_kubeadm ${kv} ${user_name} ${new_node} ${remote}
       upgrade_kubernetes_software ${kv} ${user_name} ${new_node} ${remote}
