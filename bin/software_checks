@@ -144,7 +144,7 @@ kubernetes_checks() {
     command -v $tool > /dev/null 2>&1 && [ -x $(command -v $tool) ]
     if [ $? -eq 0 ]
     then
-        kv=`kubectl version --short | awk 'END{print $3}'`
+        kv=`kubectl version --short | awk 'END{print substr($3,2);}'`
     fi
     success_version $kv $min_kube $tool
 }
