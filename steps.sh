@@ -25,7 +25,7 @@ read -p "Press any key to continue"
 
 echo "Installing WordPress Using Helm"
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install wordpresstest bitnami/wordpress --namespace wordpresssbux01 --set global.storageClass=sc-common
+helm upgrade --install wordpresstest bitnami/wordpress --namespace wordpresssbux01 --set global.storageClass=sc-common
 kubectl get pods -n wordpresssbux01
 read -p "Press any key to continue"
 
