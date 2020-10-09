@@ -1,0 +1,16 @@
+updateStrategy:
+  type: Recreate
+persistence:
+  persistentVolumeClaim:
+    registry:
+      storageClass: "sc-common"
+    chartmuseum:
+      storageClass: "sc-common"
+    jobservice:
+      storageClass: "sc-common"
+    database:
+      storageClass: "sc-common"
+    redis:
+      storageClass: "sc-common"
+    trivy:
+      storageClass: "sc-common"
