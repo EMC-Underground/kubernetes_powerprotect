@@ -146,7 +146,7 @@ upgrade_kubelet() {
   local ssh_cmd="ssh ${user_name}@${node}"
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd} || pre_cmd=""
   local curr_ctl_ver=`${pre_cmd} kubectl version --short | awk 'NR==1 {print substr($3,2);}'`
-  local curr_let_ver=`${pre_cmd} kubelet version | awk '{print substr($2,2);}'`
+  local curr_let_ver=`${pre_cmd} kubelet --version | awk '{print substr($2,2);}'`
   printf "${cyan}Marking unhold kubectl and kubelet.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubelet kubectl > /dev/null 2>&1
   success
@@ -209,13 +209,13 @@ upgrade_kubernetes() {
 install_prereqs() {
     printf "${cyan}Kickoff ${BRANCH} pre-req install playbook.... ${reset}"
     success
+    curl https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/playbook.yml -o /tmp/playbook.yml > /dev/null 2>&1
+    ansible-playbook /tmp/playbook.yml --inventory=127.0.0.1, --tags $install_tags
     if [[ " ${install_tags[@]} " =~ " kubectl " ]]
     then
       upgrade_kubernetes
       install_tags=( "${install_tags[@]/kubectl}" )
     fi
-    curl https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/playbook.yml -o /tmp/playbook.yml > /dev/null 2>&1
-    ansible-playbook /tmp/playbook.yml --inventory=127.0.0.1, --tags $install_tags
 }
 
 cleanup() {
