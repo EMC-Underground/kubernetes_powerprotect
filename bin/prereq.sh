@@ -83,6 +83,8 @@ upgrade_kubeadm() {
   [[ ! -z "$remote" ]] && pre_cmd=${ssh_cmd}
   echo "ssh cmd: ${ssh_cmd}"
   echo "node: ${node}"
+  echo "upg ver: ${upg_kube_ver}"
+  kubeadm version
   printf "${cyan}Marking kubeadm unhold.... ${reset}"
   ${pre_cmd} sudo apt-mark unhold kubeadm > /dev/null 2>&1
   success
@@ -92,6 +94,7 @@ upgrade_kubeadm() {
   printf "${cyan}Upgrading kubeadm to ${upg_kube_ver}.... ${reset}"
   ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00 > /dev/null 2>&1
   success
+  kubeadm version
   printf "${cyan}Marking kubeadm hold.... ${reset}"
   ${pre_cmd} sudo apt-mark hold kubeadm > /dev/null 2>&1
   success
