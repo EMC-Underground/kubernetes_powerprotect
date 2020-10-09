@@ -128,7 +128,7 @@ upgrade_kubernetes_software() {
     success
   else
     printf "${cyan}Updating kubernetes cluster nodes to ${upg_kube_ver}.... ${reset}"
-    ${pre_cmd} sudo kubeadm upgrade node v${upg_kube_ver} > /dev/null 2>&1
+    echo "y" | ${pre_cmd} sudo kubeadm upgrade node > /dev/null 2>&1
     success
   fi
 }
@@ -161,13 +161,14 @@ upgrade_kubernetes() {
   local remote user_name="adminuser"
   local kube_versions=( "1.15.12" "1.16.15" "1.17.12" "1.18.9" )
   printf "${cyan}Begin upgrade of kubernetes.... ${reset}\n"
+  ssh-keygen
   local hostname=`hostname`
   local masters=( `kubectl get nodes -o json | jq -r '.items[] | .metadata.labels | select(."node-role.kubernetes.io/master" != null) | ."kubernetes.io/hostname"'` )
   local workers=( `kubectl get nodes -o json | jq -r '.items[] | .metadata.labels | select(."node-role.kubernetes.io/master" == null) | ."kubernetes.io/hostname"'` )
   local all_nodes=( "${masters[@]}" "${workers[@]}" )
   for node in "${all_nodes[@]}"
   do
-    [[ ${node} != ${hostname} ]] && remote=1
+    [[ ${node} != ${hostname} ]] && remote=1 && echo "Password123!" | ssh-copy-id ${user_name}@${node}
     add_user_sudoers ${user_name} ${node} ${remote}
     remote=""
   done
