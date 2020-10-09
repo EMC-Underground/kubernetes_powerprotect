@@ -92,6 +92,7 @@ upgrade_kubeadm() {
   ${pre_cmd} sudo apt update > /dev/null 2>&1
   success
   printf "${cyan}Upgrading kubeadm to ${upg_kube_ver}.... ${reset}"
+  echo" ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00"
   ${pre_cmd} sudo apt install -y kubeadm=${upg_kube_ver}-00 > /dev/null 2>&1
   success
   kubeadm version
