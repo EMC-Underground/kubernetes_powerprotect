@@ -2,12 +2,13 @@
 apiVersion: "powerprotect.dell.com/v1beta1"
 kind: RestoreJob
 metadata:
-  name: ${restoreName}
+  name: biggerspec
   namespace: powerprotect
 spec:
   recoverType: RestoreToOriginal
-  backupJobName: ${backupJob}
+  backupJobName: k8-master02-harbor-2021-01-20-15-38-27
   namespaces:
-  - name: minio
-  persistentVolumeClaims:
-  - name: "*"
+  - name: k8-master02-harbor
+    persistentVolumeClaims:
+    - name: "*"
+  overwritePvc: true
