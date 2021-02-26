@@ -205,6 +205,10 @@ upgrade_kubernetes() {
   done
   printf "${cyan}Completed upgrade of kubernetes.... ${reset}\n"
   kubectl version --short
+  kubectl delete deployment coredns -n kube-system
+  helm repo add coredns https://coredns.github.io/helm
+  helm repo update
+  helm install coredns --namespace=kube-system coredns/coredns
 }
 
 install_prereqs() {
