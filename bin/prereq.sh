@@ -179,7 +179,7 @@ upgrade_kubelet() {
 
 upgrade_kubernetes() {
   local remote user_name="adminuser"
-  local kube_versions=( "1.15.12" "1.16.15" "1.17.12" "1.18.9" )
+  local kube_versions=( "1.15.12" "1.16.15" "1.17.12" "1.18.9" "1.19.3" )
   printf "${cyan}Begin upgrade of kubernetes.... ${reset}\n"
   ssh-keygen
   local hostname=`hostname`
@@ -211,7 +211,7 @@ install_prereqs() {
     printf "${cyan}Kickoff ${BRANCH} pre-req install playbook.... ${reset}"
     success
     curl https://raw.githubusercontent.com/EMC-Underground/project_colfax/${BRANCH}/playbook.yml -o /tmp/playbook.yml > /dev/null 2>&1
-    ansible-playbook /tmp/playbook.yml --inventory=127.0.0.1, --tags $install_tags
+    ansible-playbook /tmp/playbook.yml --inventory=127.0.0.1, --tags $install_tags -e "temp_location=/tmp"
     if [[ " ${install_tags[@]} " =~ " kubectl " ]]
     then
       upgrade_kubernetes
